@@ -1,308 +1,341 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Calculator</title>
-    <style>
-        /* Reset & Base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Calculator</title>
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #1e1e2f;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-        .calculator {
-            background: #2d2d44;
-            border-radius: 20px;
-            padding: 25px;
-            width: 350px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #1e1e2f;
+}
 
-        /* Display Screen */
-        .display {
-            background: #1a1a2e;
-            color: #ffffff;
-            font-size: 2.8rem;
-            text-align: right;
-            padding: 20px 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            min-height: 80px;
-            word-break: break-all;
-            letter-spacing: 1px;
-            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
-        }
+.calculator {
+    background: #2d2d44;
+    border-radius: 20px;
+    padding: 20px;
+    width: 420px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+}
 
-        /* Button Grid */
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-        }
+/* Two-row display */
+.display-container {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    min-height: 100px;
+    box-shadow: inset 0 4px 8px rgba(0,0,0,.4);
+}
 
-        button {
-            padding: 20px;
-            font-size: 1.6rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 14px;
-            background: #3d3d5c;
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            box-shadow: 0 4px 0 #1a1a2e;
-        }
+.expression {
+    color: #888;
+    font-size: 1.2rem;
+    text-align: right;
+    min-height: 30px;
+    word-break: break-all;
+}
 
-        button:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
-        }
+.result {
+    color: white;
+    font-size: 2.4rem;
+    text-align: right;
+    min-height: 50px;
+    word-break: break-all;
+}
 
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0 #1a1a2e;
-        }
+/* Buttons */
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
 
-        /* Operator buttons */
-        .operator {
-            background: #f39c12;
-            color: #1a1a2e;
-        }
+button {
+    padding: 18px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    background: #3d3d5c;
+    color: white;
+    cursor: pointer;
+    transition: .15s;
+    box-shadow: 0 4px 0 #1a1a2e;
+}
 
-        /* Clear & Delete */
-        .clear {
-            background: #e74c3c;
-        }
+button:hover {
+    transform: translateY(-2px);
+}
 
-        .delete {
-            background: #e67e22;
-        }
+button:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
 
-        /* Equals button */
-        .equals {
-            background: #2ecc71;
-            color: #1a1a2e;
-            grid-column: span 1;
-        }
+.operator {
+    background: #f39c12;
+    color: #111;
+}
 
-        /* Zero spans 2 columns */
-        .zero {
-            grid-column: span 2;
-        }
+.clear {
+    background: #e74c3c;
+}
 
-        /* Responsive tweak */
-        @media (max-width: 400px) {
-            .calculator {
-                width: 95%;
-                padding: 15px;
-            }
-            button {
-                padding: 15px;
-                font-size: 1.3rem;
-            }
-            .display {
-                font-size: 2.2rem;
-                padding: 15px 18px;
-            }
-        }
-    </style>
+.delete {
+    background: #e67e22;
+}
+
+.equals {
+    background: #2ecc71;
+    color: #111;
+}
+
+.zero {
+    grid-column: span 2;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="calculator">
-        <!-- Display Screen -->
-        <div class="display" id="display">0</div>
+<div class="calculator">
 
-        <!-- Buttons -->
-        <div class="buttons">
-            <!-- Row 1 -->
-            <button class="clear" onclick="clearAll()">AC</button>
-            <button class="delete" onclick="deleteLast()">⌫</button>
-            <button class="operator" onclick="chooseOperation('/')">÷</button>
-            <button class="operator" onclick="chooseOperation('*')">×</button>
-
-            <!-- Row 2 -->
-            <button onclick="appendNumber('7')">7</button>
-            <button onclick="appendNumber('8')">8</button>
-            <button onclick="appendNumber('9')">9</button>
-            <button class="operator" onclick="chooseOperation('-')">−</button>
-
-            <!-- Row 3 -->
-            <button onclick="appendNumber('4')">4</button>
-            <button onclick="appendNumber('5')">5</button>
-            <button onclick="appendNumber('6')">6</button>
-            <button class="operator" onclick="chooseOperation('+')">+</button>
-
-            <!-- Row 4 -->
-            <button onclick="appendNumber('1')">1</button>
-            <button onclick="appendNumber('2')">2</button>
-            <button onclick="appendNumber('3')">3</button>
-            <button class="equals" onclick="calculate()">=</button>
-
-            <!-- Row 5 -->
-            <button class="zero" onclick="appendNumber('0')">0</button>
-            <button onclick="appendNumber('.')">.</button>
-        </div>
+    <div class="display-container">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="display">0</div>
     </div>
 
-    <script>
-        // ---------- STATE ----------
-        let currentInput = '';      // What's currently on the screen
-        let previousInput = '';     // The number before the operator
-        let operation = null;       // '+', '-', '*', '/'
-        let shouldResetScreen = false;
+    <div class="buttons">
 
-        const display = document.getElementById('display');
+        <!-- Scientific -->
+        <button class="operator" onclick="applyFunction('sin')">sin</button>
+        <button class="operator" onclick="applyFunction('cos')">cos</button>
+        <button class="operator" onclick="applyFunction('tan')">tan</button>
+        <button class="operator" onclick="applyFunction('sinh')">sinh</button>
+        <button class="operator" onclick="applyFunction('cosh')">cosh</button>
 
-        // ---------- UPDATE DISPLAY ----------
-        function updateDisplay() {
-            if (currentInput === '') {
-                display.textContent = '0';
-            } else {
-                display.textContent = currentInput;
-            }
-        }
+        <button class="operator" onclick="applyFunction('tanh')">tanh</button>
+        <button class="operator" onclick="applyFunction('sqrt')">√</button>
+        <button class="operator" onclick="applyFunction('log')">log</button>
+        <button class="operator" onclick="applyFunction('ln')">ln</button>
+        <button class="operator" onclick="applyFunction('factorial')">x!</button>
 
-        // ---------- APPEND NUMBER ----------
-        function appendNumber(num) {
-            // If screen should reset, start fresh
-            if (shouldResetScreen) {
-                currentInput = '';
-                shouldResetScreen = false;
-            }
+        <!-- Controls -->
+        <button class="clear" onclick="clearAll()">AC</button>
+        <button class="delete" onclick="deleteLast()">⌫</button>
+        <button class="operator" onclick="appendNumber('(')">(</button>
+        <button class="operator" onclick="appendNumber(')')">)</button>
+        <button class="operator" onclick="appendNumber('^')">xʸ</button>
 
-            // Prevent multiple decimals
-            if (num === '.' && currentInput.includes('.')) return;
+        <!-- Main -->
+        <button onclick="appendNumber('7')">7</button>
+        <button onclick="appendNumber('8')">8</button>
+        <button onclick="appendNumber('9')">9</button>
+        <button class="operator" onclick="chooseOperation('/')">÷</button>
+        <button class="operator" onclick="appendNumber('π')">π</button>
 
-            // Limit input length
-            if (currentInput.length >= 15) return;
+        <button onclick="appendNumber('4')">4</button>
+        <button onclick="appendNumber('5')">5</button>
+        <button onclick="appendNumber('6')">6</button>
+        <button class="operator" onclick="chooseOperation('*')">×</button>
+        <button class="operator" onclick="appendNumber('e')">e</button>
 
-            currentInput += num;
-            updateDisplay();
-        }
+        <button onclick="appendNumber('1')">1</button>
+        <button onclick="appendNumber('2')">2</button>
+        <button onclick="appendNumber('3')">3</button>
+        <button class="operator" onclick="chooseOperation('-')">−</button>
+        <button class="equals" onclick="calculate()">=</button>
 
-        // ---------- CHOOSE OPERATION ----------
-        function chooseOperation(op) {
-            if (currentInput === '') {
-                // If user clicks operator after an equals, let them chain
-                if (previousInput !== '') {
-                    operation = op;
-                }
-                return;
-            }
+        <button class="zero" onclick="appendNumber('0')">0</button>
+        <button onclick="appendNumber('.')">.</button>
+        <button class="operator" onclick="chooseOperation('+')">+</button>
 
-            // If there's already a pending operation, calculate it first
-            if (previousInput !== '' && operation !== null) {
-                calculate();
-            }
+    </div>
+</div>
 
-            // Set the operation and move current to previous
-            operation = op;
-            previousInput = currentInput;
-            currentInput = '';
-            shouldResetScreen = false;
-            updateDisplay();
-        }
+<script>
+let currentInput = '';
+let expression = '';
+let previousInput = '';
+let operation = null;
+let shouldResetScreen = false;
 
-        // ---------- CALCULATE ----------
-        function calculate() {
-            if (operation === null || previousInput === '' || currentInput === '') {
-                // If just pressing '=', show the current number
-                if (currentInput === '' && previousInput !== '') {
-                    currentInput = previousInput;
+const display = document.getElementById('display');
+const expressionDisplay = document.getElementById('expression');
+
+function updateDisplay() {
+    display.textContent = currentInput || '0';
+    expressionDisplay.textContent = expression;
+}
+
+function appendNumber(num) {
+    if (shouldResetScreen) {
+        currentInput = '';
+        shouldResetScreen = false;
+    }
+
+    if (num === '.' && currentInput.includes('.')) return;
+
+    if (num === 'π') num = Math.PI;
+    if (num === 'e') num = Math.E;
+
+    currentInput += num;
+    expression += num;
+
+    updateDisplay();
+}
+
+function chooseOperation(op) {
+    if (currentInput === '') return;
+
+    if (previousInput !== '' && operation !== null) {
+        calculate();
+    }
+
+    operation = op;
+    previousInput = currentInput;
+    currentInput = '';
+    expression += op;
+
+    updateDisplay();
+}
+
+function calculate() {
+    let result;
+
+    if (expression.includes('^')) {
+        let parts = expression.split('^');
+        result = Math.pow(parseFloat(parts[0]), parseFloat(parts[1]));
+    } else {
+        const prev = parseFloat(previousInput);
+        const curr = parseFloat(currentInput);
+
+        switch (operation) {
+            case '+':
+                result = prev + curr;
+                break;
+            case '-':
+                result = prev - curr;
+                break;
+            case '*':
+                result = prev * curr;
+                break;
+            case '/':
+                if (curr === 0) {
+                    currentInput = 'Error';
+                    expression = '';
                     updateDisplay();
-                }
-                return;
-            }
-
-            const prev = parseFloat(previousInput);
-            const curr = parseFloat(currentInput);
-            let result;
-
-            if (isNaN(prev) || isNaN(curr)) return;
-
-            switch (operation) {
-                case '+':
-                    result = prev + curr;
-                    break;
-                case '-':
-                    result = prev - curr;
-                    break;
-                case '*':
-                    result = prev * curr;
-                    break;
-                case '/':
-                    if (curr === 0) {
-                        currentInput = 'Error';
-                        previousInput = '';
-                        operation = null;
-                        updateDisplay();
-                        return;
-                    }
-                    result = prev / curr;
-                    break;
-                default:
                     return;
-            }
-
-            // Round to avoid floating-point issues
-            result = parseFloat(result.toFixed(10));
-
-            // Store result for chaining
-            currentInput = String(result);
-            previousInput = '';
-            operation = null;
-            shouldResetScreen = true; // Next number starts fresh
-            updateDisplay();
-        }
-
-        // ---------- CLEAR ALL ----------
-        function clearAll() {
-            currentInput = '';
-            previousInput = '';
-            operation = null;
-            shouldResetScreen = false;
-            updateDisplay();
-        }
-
-        // ---------- DELETE LAST ----------
-        function deleteLast() {
-            if (shouldResetScreen) {
-                clearAll();
+                }
+                result = prev / curr;
+                break;
+            default:
                 return;
-            }
-            currentInput = currentInput.slice(0, -1);
-            updateDisplay();
         }
+    }
 
-        // ---------- KEYBOARD SUPPORT ----------
-        document.addEventListener('keydown', (e) => {
-            if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
-            else if (e.key === '.') appendNumber('.');
-            else if (e.key === '+') chooseOperation('+');
-            else if (e.key === '-') chooseOperation('-');
-            else if (e.key === '*') chooseOperation('*');
-            else if (e.key === '/') {
-                e.preventDefault();
-                chooseOperation('/');
-            } else if (e.key === 'Enter' || e.key === '=') {
-                e.preventDefault();
-                calculate();
-            } else if (e.key === 'Backspace') deleteLast();
-            else if (e.key === 'Escape') clearAll();
-        });
-    </script>
+    result = parseFloat(result.toFixed(10));
+
+    expressionDisplay.textContent = expression + '=';
+    currentInput = String(result);
+    expression = '';
+    previousInput = '';
+    operation = null;
+    shouldResetScreen = true;
+
+    updateDisplay();
+}
+
+function applyFunction(func) {
+    let num = parseFloat(currentInput);
+    if (isNaN(num)) return;
+
+    switch (func) {
+        case 'sin':
+            currentInput = String(Math.sin(num * Math.PI / 180));
+            break;
+        case 'cos':
+            currentInput = String(Math.cos(num * Math.PI / 180));
+            break;
+        case 'tan':
+            currentInput = String(Math.tan(num * Math.PI / 180));
+            break;
+        case 'sinh':
+            currentInput = String(Math.sinh(num));
+            break;
+        case 'cosh':
+            currentInput = String(Math.cosh(num));
+            break;
+        case 'tanh':
+            currentInput = String(Math.tanh(num));
+            break;
+        case 'sqrt':
+            currentInput = String(Math.sqrt(num));
+            break;
+        case 'log':
+            currentInput = String(Math.log10(num));
+            break;
+        case 'ln':
+            currentInput = String(Math.log(num));
+            break;
+        case 'factorial':
+            currentInput = String(factorial(num));
+            break;
+    }
+
+    expression = func + "(" + num + ")";
+    updateDisplay();
+}
+
+function factorial(n) {
+    if (n < 0) return "Error";
+    if (n === 0 || n === 1) return 1;
+
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+function clearAll() {
+    currentInput = '';
+    previousInput = '';
+    operation = null;
+    expression = '';
+    shouldResetScreen = false;
+    updateDisplay();
+}
+
+function deleteLast() {
+    currentInput = currentInput.slice(0, -1);
+    expression = expression.slice(0, -1);
+    updateDisplay();
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
+    else if (e.key === '.') appendNumber('.');
+    else if (['+', '-', '*', '/'].includes(e.key)) chooseOperation(e.key);
+    else if (e.key === 'Enter' || e.key === '=') calculate();
+    else if (e.key === 'Backspace') deleteLast();
+    else if (e.key === 'Escape') clearAll();
+});
+</script>
 
 </body>
 </html>
+```
